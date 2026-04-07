@@ -1,50 +1,81 @@
-# Welcome to your Expo app 👋
+# WashEase Laundry Platform 🧺✨
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**WashEase** is a high-end, editorial-focused laundry application designed for professional care and fast delivery. Built with React Native (Expo) and a real-time Node.js/Firebase backend.
 
-## Get started
+---
 
-1. Install dependencies
+## 🏛️ Project Architecture
 
-   ```bash
-   npm install
-   ```
+This project follows a **Database-per-Service** pattern to ensure loose coupling and scalability. All cross-service synchronization is handled by an internal **Event-Driven SyncManager**.
 
-2. Start the app
+### 🌟 Key Features
+- **Proportional Flex UI**: Responsive onboarding and service screens.
+- **Event-Driven Sync**: 
+    - `Order` -> `User Stats` (Atomic counts).
+    - `Payment` -> `Order Status` (Real-time updates).
+    - `Fleet` -> `Capacity Management` (Load balancing).
+- **Admin Dashboard API**: Unified statistics across all services.
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 🛠️ Tech Stack
+- **Frontend**: React Native (Expo SDK 54), Expo Router, Lucide Icons, Reanimated.
+- **Backend**: Node.js (Express), Firebase Admin SDK, Stripe API.
+- **Design System**: Fluid Sanctuary (Modern glassmorphism & soft color palettes).
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🚀 Getting Started
 
-## Get a fresh project
+### 1. Prerequisites
+- Node.js (v18+)
+- Expo Go (for testing the app)
+- Firebase Account
 
-When you're ready, run:
-
+### 2. Installation
 ```bash
-npm run reset-project
+# Install root dependencies
+npm install
+
+# Install server dependencies
+cd server
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 3. Setup Secrets (CRITICAL)
+For security, credentials are NOT stored in Git.
+1. Download `serviceAccount.json` from **Firebase Console > Project Settings > Service Accounts**.
+2. Save it as `server/serviceAccount.json`.
+3. Create `server/.env` and add:
+   ```env
+   PORT=4000
+   FIREBASE_PROJECT_ID=your-project-id
+   STRIPE_SECRET=your-stripe-secret
+   ```
 
-## Learn more
+### 4. Running the Project
+```bash
+# Start the App
+npx expo start
 
-To learn more about developing your project with Expo, look at the following resources:
+# Start the Backend
+cd server
+npm run dev
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+## 📡 API Endpoints (Local: `http://localhost:4000`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| **GET** | `/api/admin/dashboard` | Unified Cross-Service Statistics (Fleet, Orders, Users) |
+| **GET** | `/api/services` | Fetches all available laundry services |
+| **POST** | `/api/orders` | Places a new laundry order |
+| **GET** | `/api/orders/:id/tracking` | Real-time order tracking and timeline |
 
-Join our community of developers creating universal apps.
+---
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 📜 System Rulebook
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation on how data synchronization and state transitions are managed.
+
+**Crafted with 💙 by WashEase Team**
