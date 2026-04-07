@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import { ShieldCheck, MapPin, Phone, MessageCircle, ChevronRight, CheckCircle2, Waves } from 'lucide-react-native';
+import { ShieldCheck, MapPin, Phone, MessageCircle, ChevronRight, CheckCircle2, Waves, User } from 'lucide-react-native';
 import { COLORS, SPACING, ROUNDNESS, TYPOGRAPHY } from '../../src/styles/theme';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';

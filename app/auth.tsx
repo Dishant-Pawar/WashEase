@@ -9,10 +9,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+
+const { height } = Dimensions.get('window');
 import { LinearGradient } from 'expo-linear-gradient';
-import { Mail, Lock, Chrome, Apple } from 'lucide-react-native';
+import { Mail, Lock, Globe, Apple } from 'lucide-react-native';
 import { COLORS, SPACING, ROUNDNESS, TYPOGRAPHY } from '../src/styles/theme';
 
 export default function AuthScreen() {
@@ -88,7 +91,7 @@ export default function AuthScreen() {
 
           <View style={styles.socialRow}>
             <TouchableOpacity style={styles.socialBtn}>
-              <Chrome size={24} color={COLORS.text} />
+              <Globe size={24} color={COLORS.text} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.socialBtn}>
               <Apple size={24} color={COLORS.text} />

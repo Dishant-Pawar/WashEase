@@ -7,11 +7,15 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Initialize Firebase Admin (Place serviceAccount.json in server root)
-// admin.initializeApp({
-//   credential: admin.credential.cert(require('./serviceAccount.json')),
-//   databaseURL: 'https://waseease-2976112745122822859.firebaseio.com'
-// });
+// Initialize Firebase Admin
+admin.initializeApp({
+  credential: admin.credential.cert(require('./serviceAccount.json')),
+  databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
+});
+
+// 2. Start SyncManager (Data Synchronization)
+const syncManager = require('./services/sync_manager');
+syncManager.init();
 
 app.use(cors());
 app.use(express.json());
@@ -66,6 +70,46 @@ app.post('/api/payments/create-intent', async (req, res) => {
     res.send({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
     res.status(400).send({ error: error.message });
+  }
+});
+
+// 6. Admin Dashboard (Aggregated Statistics)
+app.get('/api/admin/dashboard', async (req, res) => {
+  try {
+    const db = admin.firestore();
+    
+    // Fetch stats in parallel for speed
+    const [ordersSnap, usersSnap, couriersSnap, errorsSnap] = await Promise.all([
+      db.collection('orders').get(),
+      db.collection('users').get(),
+      db.collection('couriers').get(),
+      db.collection('sync_errors').where('retried', '==', false).get()
+    ]);
+
+    const stats = {
+      orders: {
+        total: ordersSnap.size,
+        active: ordersSnap.docs.filter(d => !['DELIVERED', 'CANCELLED'].includes(d.data().status)).length,
+        delivered: ordersSnap.docs.filter(d => d.data().status === 'DELIVERED').length
+      },
+      users: {
+        total: usersSnap.size,
+        premium: usersSnap.docs.filter(d => d.data().isPremium).length
+      },
+      fleet: {
+        totalCouriers: couriersSnap.size,
+        activeLoad: couriersSnap.docs.reduce((acc, doc) => acc + (doc.data().currentLoad || 0), 0),
+        available: couriersSnap.docs.filter(d => (d.data().currentLoad || 0) < 5).length
+      },
+      systemHealth: {
+        pendingSyncErrors: errorsSnap.size,
+        lastBackup: new Date().toISOString()
+      }
+    };
+
+    res.json({ success: true, stats });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -75,13 +76,25 @@ export default function Onboarding() {
         }}
         renderItem={({ item }) => (
           <View style={styles.slide}>
-            <View style={[styles.imageContainer, { backgroundColor: item.color }]}>
-               {/* Image placeholder */}
-               <View style={styles.placeholderIcon} />
+            {/* Top Section: Flexible Image Area */}
+            <View style={styles.imageWrapper}>
+              <View style={[styles.imageContainer, { backgroundColor: item.color }]}>
+                 {/* Image placeholder */}
+                 <View style={styles.placeholderIcon} />
+              </View>
             </View>
-            <View style={styles.content}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.description}>{item.description}</Text>
+
+            {/* Bottom Section: Scrollable Text Area */}
+            <View style={styles.contentArea}>
+              <ScrollView 
+                contentContainerStyle={styles.content}
+                showsVerticalScrollIndicator={false}
+              >
+                <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
+                <Text style={styles.description}>
+                  {item.description}
+                </Text>
+              </ScrollView>
             </View>
           </View>
         )}
@@ -126,6 +139,8 @@ const styles = StyleSheet.create({
   topBar: {
     paddingHorizontal: SPACING.lg,
     paddingVertical: SPACING.md,
+    height: 60,
+    justifyContent: 'center',
     alignItems: 'flex-end',
   },
   skipText: {
@@ -136,38 +151,46 @@ const styles = StyleSheet.create({
   slide: {
     width: width,
     flex: 1,
+    justifyContent: 'space-between',
+  },
+  imageWrapper: {
+    flex: 1.2, // Takes more space but shrinks if needed
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   imageContainer: {
-    width: width * 0.85,
-    height: height * 0.45,
-    alignSelf: 'center',
-    marginTop: SPACING.xl,
+    width: width * 0.8,
+    height: '80%', // Responsive height within the wrapper
     borderRadius: ROUNDNESS.xl,
     justifyContent: 'center',
     alignItems: 'center',
-    // Intentional asymmetry mentioned in PRD
     transform: [{ rotate: '-2deg' }],
   },
   placeholderIcon: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     backgroundColor: '#FFF',
     opacity: 0.5,
   },
+  contentArea: {
+    flex: 1, // Takes remaining space
+    paddingTop: SPACING.md,
+  },
   content: {
     paddingHorizontal: SPACING.xl,
-    marginTop: SPACING.xxl,
   },
   title: {
     ...TYPOGRAPHY.h1,
+    fontSize: 28,
     color: COLORS.text,
+    textAlign: 'left',
   },
   description: {
     ...TYPOGRAPHY.body,
     color: COLORS.textVariant,
-    marginTop: SPACING.md,
-    lineHeight: 24,
+    marginTop: SPACING.sm,
+    lineHeight: 22,
   },
   footer: {
     paddingHorizontal: SPACING.xl,
